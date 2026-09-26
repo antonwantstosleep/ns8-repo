@@ -1,0 +1,27 @@
+{
+  "name": "n8n",
+  "description": {
+    "en": "n8n is a flexible AI workflow automation for technical teams."
+  },
+  "categories": ["development"],
+  "authors": [
+    {
+      "name": "Martin Bhuong",
+      "email": "martin@genius.ke"
+    },
+    {
+      "name": "Markus Neuberger",
+      "email": "dev@markusneuberger.at"
+    },
+    {
+      "name": "Anton Vakhrameev",
+      "email": "aavakhrameev@gmail.com"
+    }
+  ],
+  "docs": {
+    "documentation_url": "https://docs.n8n.io/",
+    "bug_url": "https://github.com/antonwantstosleep/ns8-n8n/issues",
+    "code_url": "https://github.com/antonwantstosleep/ns8-n8n"
+  },
+  "source": "ghcr.io/antonwantstosleep/n8n"
+}

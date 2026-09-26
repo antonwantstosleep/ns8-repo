@@ -1,0 +1,55 @@
+name: Publish repository index
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "25 * * * *"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install repository tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+          pip install semver filetype pyyaml
+      - name: Build repodata.json
+        run: python3 createrepo.py .
+      - name: Stage Pages site
+        run: |
+          mkdir -p public
+          cp repodata.json public/
+          cp -a n8n public/
+          python3 - <<'PY'
+          import json
+          data = json.load(open("public/repodata.json"))
+          assert data and data[0]["id"] == "n8n", data
+          tags = [v["tag"] for v in data[0]["versions"]]
+          assert tags, "no n8n tags visible in ghcr.io/antonwantstosleep/n8n"
+          print("indexed", tags)
+          PY
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
