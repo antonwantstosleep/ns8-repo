@@ -1,5 +1,5 @@
 {
-  "name": "nextcloud-mcp-server",
+  "name": "Nextcloud MCP Server",
   "description": {
     "en": "Nextcloud MCP server with in-module Qdrant. Embeddings from external Ollama.",
     "ru": "MCP-сервер Nextcloud с Qdrant в модуле. Эмбеддинги — внешний Ollama."
