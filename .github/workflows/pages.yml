@@ -32,14 +32,23 @@ jobs:
         run: |
           mkdir -p public
           cp repodata.json public/
-          cp -a n8n public/
+          for dir in */; do
+            [ -f "${dir}metadata.json" ] || continue
+            cp -a "$dir" public/
+          done
           python3 - <<'PY'
           import json
           data = json.load(open("public/repodata.json"))
-          assert data and data[0]["id"] == "n8n", data
-          tags = [v["tag"] for v in data[0]["versions"]]
+          by_id = {entry["id"]: entry for entry in data}
+          assert "n8n" in by_id, data
+          tags = [v["tag"] for v in by_id["n8n"]["versions"]]
           assert tags, "no n8n tags visible in ghcr.io/antonwantstosleep/n8n"
-          print("indexed", tags)
+          print("indexed n8n", tags)
+          nc = by_id.get("nextcloud-mcp-server")
+          if nc is None:
+              print("nextcloud-mcp-server not in index yet (image private or inspect failed)")
+          else:
+              print("indexed nextcloud-mcp-server", [v["tag"] for v in nc["versions"]])
           PY
       - uses: actions/upload-pages-artifact@v3
         with:
