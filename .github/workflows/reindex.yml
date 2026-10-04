@@ -1,0 +1,30 @@
+name: Reindex from module tag
+
+# A module repository starts this after it publishes a version tag.
+# This calls pages.yml, the same rebuild an empty commit on main runs:
+# createrepo.py reads GHCR tags, so version numbers are not hardcoded.
+# The hourly cron in pages.yml stays as the backup.
+#
+# GITHUB_TOKEN cannot start a workflow in another repository. Store a
+# fine-grained PAT (repository antonwantstosleep/ns8-repo, Actions:
+# Read and write) in the module repository as NS8_REPO_DISPATCH_TOKEN.
+#
+# POST /repos/antonwantstosleep/ns8-repo/actions/workflows/reindex.yml/dispatches
+# Authorization: Bearer $NS8_REPO_DISPATCH_TOKEN
+# {"ref":"main"}
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  publish:
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
