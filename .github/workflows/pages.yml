@@ -39,27 +39,13 @@ jobs:
           done
           python3 - <<'PY'
           import json
-          meta = json.load(open("nextcloud-mcp-server/metadata.json"))
-          # name is the Soft Center card title. id stays the directory name
-          # (createrepo.py sets it before this file is merged) and source is
-          # the image install/update key.
-          assert meta["name"] == "Nextcloud MCP Server", meta["name"]
-          assert "id" not in meta
-          assert meta["source"] == "ghcr.io/antonwantstosleep/nextcloud-mcp-server"
           data = json.load(open("public/repodata.json"))
           by_id = {entry["id"]: entry for entry in data}
           assert "n8n" in by_id, data
           tags = [v["tag"] for v in by_id["n8n"]["versions"]]
           assert tags, "no n8n tags visible in ghcr.io/antonwantstosleep/n8n"
           print("indexed n8n", tags)
-          nc = by_id.get("nextcloud-mcp-server")
-          if nc is None:
-              print("nextcloud-mcp-server not in index yet (image private or inspect failed)")
-          else:
-              assert nc["id"] == "nextcloud-mcp-server"
-              assert nc["name"] == "Nextcloud MCP Server", nc["name"]
-              assert nc["source"] == "ghcr.io/antonwantstosleep/nextcloud-mcp-server", nc["source"]
-              print("indexed nextcloud-mcp-server", [v["tag"] for v in nc["versions"]])
+          assert "nextcloud-mcp-server" not in by_id
           PY
       - uses: actions/upload-pages-artifact@v3
         with:
